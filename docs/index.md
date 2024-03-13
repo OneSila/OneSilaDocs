@@ -105,11 +105,3 @@ Or with html
 ```bash
 coverage html
 ```
-
-## How to run the documentation locally
-
-1. virtualenv venv
-2. source venv/bin/active
-3. pip install -r requirements.txt
-4. cd docs
-5. mkdocs serve
