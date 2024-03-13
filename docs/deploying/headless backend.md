@@ -2,7 +2,7 @@
 
 This is updated for Debian 12
 
-Note: This guide is assuming the [tweave.tech](http://tweave.tech) host. Don’t forget to make changes to the domains, repo’s and other settings.  This guide also assumes all settings have been configured and is a working, deployable app.
+Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.com) host. Don’t forget to make changes to the domains, repo’s and other settings.  This guide also assumes all settings have been configured and is a working, deployable app.
 
 ### Create your server:
 
@@ -173,8 +173,6 @@ sudo supervisorctl reread
 sudo supervisorctl update
 ```
 
-This will ensure that the supervisorctl will know the files exsits. We will use them later.
-
 ### Setup Nginx
 
 1.  Create a nginx config file `onesila`. Run: `sudo nano /etc/nginx/sites-available/onesila`
@@ -296,7 +294,7 @@ sudo ln -s /etc/nginx/sites-available/onesila /etc/nginx/sites-enabled/onesila
 
 If all was setup correctly, you should now be able to access your app via https://myonesilaserver.com/
 
-### Adding configuration file
+### Adding the OneSila configuration file
 
 Use the template settings file `local_template.py` to make a `local.py` file.
 
@@ -310,19 +308,55 @@ Then we can:
 nano /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local.py
 ```
 
-Edit the file and adjust ALLOWED_HOST, DATABASE, SECRET_KEY and add a EMAIL_BACKEND
+Edit the file and adjust at a minimumm  ALLOWED_HOST, DATABASE and SECRET_KEY.
+Use the database settings you used earliers.
+
+Now we can finally run the services:
+```
+sudo supervisorctl start hypercornctl
+sudo supervisorctl start huey
+```
+
+and run migrations
+
+```
+source /home/onesila/venv/bin/activate
+cd /home/onesila/OneSilaHeadless/
+./manage migrations
+./manage collectstatic
+```
+
 
 # @FIXME Show the actual changes
 
-### Auto deployment:
+## Auto deployment:
 
-1. Add your deployment keys to bitbucket of github
+### Add your deployment keys to bitbucket of github
 
 ```python
 su onesila -c "cat /home/onesila/.ssh/id_rsa.pub"
 ```
 
+### Prepping the variables in your fork.
 
+First of all, in order to auto-deploy we will need a new pair of SSH keys. You can generate them by running `ssh-keygen -t rsa` and specifying a new folder.  You'll need the later.
+
+Next, you can specify both your master and development servers by creating the secrets in github.
+
+DEVELOPMENT_HOSTNAME = dev.myonesilaserver.com
+DEVELOPMENT_USERNAME = onesila
+DEVELOPMENT_SECRET_KEY_SSH = {the contents of your new rsa private key.}
+
+
+MASTER_HOSTNAME = myonesilaserver.com
+MASTER_USERNAME = onesila
+
+You can specify these under your repository settings where you can find `secrets and variables`.
+
+
+### Adding your authorized keys
+
+You want to add your new public key to your authorized keys as well on the server.
 
 ### Docker
 
