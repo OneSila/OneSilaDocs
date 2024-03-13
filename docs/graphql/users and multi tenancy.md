@@ -68,7 +68,17 @@ mutation {
 
 ## Inviting Collegues
 
-Once a user has been setup, it will be assigned as `is_multi_tenant_company_owner`. This can be transferred, should you wish but more importantly, this user can also invite other users via:
+Once a user has been setup, it will be assigned as `is_multi_tenant_company_owner`. This can be transferred, should you wish but more importantly, this user can also invite other users.
+
+The flow is as follows:
+
+1. Invite user
+2. User get email with authenticatin link
+3. User Login via autenticateToken mutation
+4. Load languages and settings for user and offer password and language input
+5. Use acceptInvite mutation
+
+**Invite user** 
 
 ```graphql
 mutation {
@@ -80,7 +90,22 @@ mutation {
 }
 ```
 
-Note that don't need to supply a password. OneSila will email the new user with an invitation link to create a password.
+**Autenticate user**
+See below
+
+**acceptUserInvitation**
+
+
+```graphql
+mutation acceptUserInvitation($password: String!, $language: String!){
+  acceptUserInvitation(data: {password: $password, language: $language}){
+    username
+    isActive
+    invitationAccepted
+  }
+}
+```
+
 
 ## Disabling / re-enabling users
 
@@ -145,9 +170,9 @@ Once the user receives the link, you should take the ID from the link provided.
 That link will be the ID with which you can call the actual login mutation.
 
 ```graphql
-mutation($username: String!){
-  loginToken(data:{username: $username}){
-    expiresAt
+mutation($token: String!){
+  authenticateToken(token: $token){
+    username
   }
 }
 ```

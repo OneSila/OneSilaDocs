@@ -4,17 +4,9 @@
 
 ## Models
 
-### Search fields
+FIXME: Proxy-models
+FIXME: Subscriptions and schema declaration 
 
-The default manager also has the search ability added. Searching through the models should be set by adding:
-
-```python
-class MyModel(models.Model):
-    my_field = models.CharField(max_length=100)
-
-    class Meta:
-        search_fields = ['my_field']
-```
 
 
 ### Private Models
@@ -70,6 +62,18 @@ from core import models
 
 class MySharedThing(models.SharedModel):
     field = models.IntegerField()
+```
+
+### Search fields
+
+The default manager also has the search ability added. Searching through the models should be set by adding:
+
+```python
+class MyModel(models.Model):
+    my_field = models.CharField(max_length=100)
+
+    class Meta:
+        search_fields = ['my_field']
 ```
 
 ## Views and URL's
