@@ -59,7 +59,7 @@ echo myonesilaserver.com | sudo tee /etc/hostname
 5Setup some more dependencies:
 
 ```python
-apt-get install vim htop screen python3-dev git build-essential python3-pip postgresql postgresql-client postgresql-server-dev-all postgresql-contrib nginx supervisor python3-hypercorn python3-virtualenv -y
+apt-get install vim htop screen python3-dev git build-essential python3-pip postgresql postgresql-client postgresql-server-dev-all postgresql-contrib nginx supervisor python3-hypercorn python3-virtualenv redis -y
 ```
 
 6. Setup your certificates with letsencrypt, and generate a dhparam for use later
