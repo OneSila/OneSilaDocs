@@ -334,7 +334,7 @@ cd /home/onesila/OneSilaHeadless/
 ### Add your deployment keys to bitbucket of github
 
 ```python
-su onesila -c "cat /home/onesila/.ssh/id_rsa.pub"
+cat /home/onesila/.ssh/id_rsa.pub
 ```
 
 ### Prepping the variables in your fork.
