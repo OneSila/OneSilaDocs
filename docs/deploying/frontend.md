@@ -66,3 +66,19 @@ Section 2: The new root - everything vue/frontend:
         root /home/onesila/OneSilaFrontend/dist/;
         try_files $uri $uri/ /index.html;
     }
+
+
+### Auto deployment
+
+In our auto deployment screept we will have
+
+```yaml
+  script: |
+    export VITE_APP_API_GRAPHQL_URL=https://${{ secrets.DEVELOPMENT_HOSTNAME }}/graphql/
+    export VITE_APP_API_GRAPHQL_WEBSOCKET_URL=wss://${{ secrets.DEVELOPMENT_HOSTNAME }}/graphql/
+    export VITE_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }} 
+    export VITE_APP_SENTRY_ENV=development
+```
+
+DEVELOPMENT_HOSTNAME should be already configured in the backend but make sure this secret is added on github.
+Also make sure you add VITE_APP_SENTRY_ENV, when we set it to 'development' we will have the apollo cache system disabled by default.
