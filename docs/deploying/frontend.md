@@ -1,53 +1,42 @@
+# Deploying the frontend.
 
-## Problem solving
+First and foremost, the frontend assumes you have already deployed the backend / headless server.
 
-Github only allows a deployment key to be used once.
-The way around it is to add the key to one of the user accounts as an ssh-key
+## Server Dependencies
 
-(https://docs.github.com/en/authentication/troubleshooting-ssh/error-key-already-in-use)
-
-### Deployment
-
-1. Install NPM
+Install NPM
 
 ```commandline
 sudo apt-get install npm
 ```
 
-2. We will first need to pull the fontend repository in the same folder as the backend one:
+## Add the repository
+
+On your server, with the user creating for the backend, log in and pull the fontend repository in the same folder as the backend one:
 
 ```commandline
 cd /home/onesila/
 git clone git@github.com:OneSila/OneSilaFrontend.git
+cd OneSilaFrontend
+git pull
 ```
 
-3. Build the files:
-
-```commandline
-cd /home/onesila/OneSilaFrontend
-export VITE_APP_API_GRAPHQL_URL=$DEV_API_GRAPHQL_URL
-npm install -g npm
-npm install
-npm run build
-```
-
+## Adjust the nginx config.
 
 In order to connect the frontend to the backend, we must add two sections to our nginx file. 
 
-Section 1: direct backend django routes
+### Section 1: direct backend django routes
 
-    replace location / { by:
+    replace location / { 
 
-    location ~ ^/(admin|api|emtools|graphql|pricecards|product_import_export_tools|telegram_chatbot|channable)/ {
+by:
+
+    location ~ ^/(admin|api)/ {
 
 
-
-Section 2: The new root - everything vue/frontend:
+### Section 2: The new root - everything vue/frontend:
 
     location / {
-        if (-f /home/tim//maintenance.flag) {
-            return 503;
-        }
         # Frontend files are housed here.
 
         # Let's keep the browser from caching files the index.html
@@ -66,3 +55,15 @@ Section 2: The new root - everything vue/frontend:
         root /home/onesila/OneSilaFrontend/dist/;
         try_files $uri $uri/ /index.html;
     }
+
+
+## Github secrets
+
+If you created the secrets for the backend as organisation secrets, this should just work. If not, go ahead an create the secrets again.
+
+## Troubleshooting
+
+Github only allows a deployment key to be used once.
+The way around it is to add the key to one of the user accounts as an ssh-key
+
+(https://docs.github.com/en/authentication/troubleshooting-ssh/error-key-already-in-use)

@@ -89,7 +89,6 @@ sudo su - postgres -c """psql -c 'ALTER DATABASE onesila OWNER TO onesila;'"""
 cd /home/onesila
 git clone git@github.com:OneSila/OneSilaHeadless.git
 cd OneSilaHeadless
-git checkout master
 git pull
 cd ..
 virtualenv venv
@@ -255,6 +254,15 @@ server {
         # clients, really.
         # proxy_buffering off;
 
+        # For websockets we want a few more settings.  If you have
+        # issues, you might want to split up the ws and graphql paths
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 1800;
+        proxy_send_timeout 1800;
+
+
         # Try to serve static files from nginx, no point in making an
         # *application* server like Unicorn/Rainbows! serve static files.
         if (!-f $request_filename) {
@@ -310,6 +318,7 @@ nano /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local.py
 
 Edit the file and adjust at a minimumm  ALLOWED_HOST, DATABASE and SECRET_KEY.
 Use the database settings you used earliers.
+AND ensure you setup CORS or your graphql will not work.  # FIMXE: Details on how to fix CORS?
 
 Now we can finally run the services:
 ```
