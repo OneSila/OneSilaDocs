@@ -38,14 +38,12 @@ Section 1: direct backend django routes
 
     replace location / { by:
 
-    location ~ ^/(admin|api|emtools|graphql|pricecards|product_import_export_tools|telegram_chatbot|channable)/ {
-
-
+    location ~ ^/(admin|graphql)/ { ...
 
 Section 2: The new root - everything vue/frontend:
 
     location / {
-        if (-f /home/tim//maintenance.flag) {
+        if (-f /home/onesila//maintenance.flag) {
             return 503;
         }
         # Frontend files are housed here.
