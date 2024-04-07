@@ -32,12 +32,31 @@ The simplest way to generate data for a simple model is to declare some settings
         field_mapper = {
             'name': fake.name,
             'unit': (fake.unit, {'length': 10}),
+            'fixed_value': 329,
        }
     registry.register_private_app(AppMyModelGenerator)
     ```
 
 This class based approach will no only create the demo-data but also make sure it is tracked and removable.
-If however you have a more comnplex case, you can either choose to override the individual functions in the class - or simply use the class-based approach.
+If however you have a more complex case, you can either choose to override the individual functions in the class - or simply use the class-based approach.
+
+### Setting field_mapper values.
+
+The field_mapper values are expecting either:
+
+- function without the (): `fake.name`
+- tuple of a function without the () and the kwargs: `(fake.ean, {length=13})`
+- fixed value, eg an `int` or `str`
+
+
+### Dynamic field_mapper values
+
+To assign dynamic values, if you need foreight keys - it's easiest to just override the `prep_baker_kwargs` method. eg:
+
+    def prep_baker_kwargs(self, seed):
+        kwargs = super().prep_baker_kwargs(seed)
+        kwargs['vat_rate'] = VatRate.objects.last()
+        return kwargs
 
 ## Function based demo data.
 
