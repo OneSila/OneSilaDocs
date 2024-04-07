@@ -31,7 +31,7 @@ The simplest way to generate data for a simple model is to declare some settings
         count = 1
         field_mapper = {
             'name': fake.name,
-            'unit': fake.unit,
+            'unit': (fake.unit, {'length': 10}),
        }
     registry.register_private_app(AppMyModelGenerator)
     ```
