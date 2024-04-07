@@ -14,337 +14,348 @@ Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.c
 
 1. Setup password-less sudo for sudo users.
 
-```python
-# As root:
-echo "%sudo ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
-```
+    ```python
+    # As root:
+    echo "%sudo ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
+    ```
 
 2. Create a user on the remote server, and **add your required keys**
 
-```python
-#ssh root@myonesilaserver.com
-useradd onesila -m -g sudo -s /bin/bash
-su onesila -c ssh-keygen
-# Assuming you deployed with digitalocean, and setup the correct
-# keys to begin with.
-# If not, copy the keys to /home/onesila/.ssh/authorized_keys manually
-cp /root/.ssh/authorized_keys /home/onesila/.ssh/
-chown onesila -R /home/onesila/.ssh
-```
+    ```python
+    #ssh root@myonesilaserver.com
+    useradd onesila -m -g sudo -s /bin/bash
+    su onesila -c ssh-keygen
+    # Assuming you deployed with digitalocean, and setup the correct
+    # keys to begin with.
+    # If not, copy the keys to /home/onesila/.ssh/authorized_keys manually
+    cp /root/.ssh/authorized_keys /home/onesila/.ssh/
+    chown onesila -R /home/onesila/.ssh
+    ```
 
 3. Harden ssh by disabling password logins (Optional)
 
-Warning! This settings will stop you from login to the server if you don't have your authorized keys setup correctly.
-To verify if your authorized keys are working correctly try to login to the server with the user created above: `ssh onesila@myonesilaserver.com`
+    Warning! This settings will stop you from login to the server if you don't have your authorized keys setup correctly.
+    To verify if your authorized keys are working correctly try to login to the server with the user created above: `ssh onesila@myonesilaserver.com`
 
-Also verify that that you can gain superuser privileges by typing `sudo su`
+    Also verify that that you can gain superuser privileges by typing `sudo su`
 
-If all the above working correctly you can follow the instructions bellow:
+    If all the above working correctly you can follow the instructions bellow:
 
-```python
-nano /etc/ssh/sshd_config
-# Find the line with "PasswordAuthentication" and set it to:
-# PasswordAuthentication no
-# Ideally you want to make sure you cannot login root users via ssh
-# PermitRootLogin no
-/etc/init.d/ssh restart
-```
+    ```python
+    nano /etc/ssh/sshd_config
+    # Find the line with "PasswordAuthentication" and set it to:
+    # PasswordAuthentication no
+    # Ideally you want to make sure you cannot login root users via ssh
+    # PermitRootLogin no
+    /etc/init.d/ssh restart
+    ```
 
 4. Setup your proper hostname
 
-```python
-echo myonesilaserver.com | sudo tee /etc/hostname
-```
+    ```python
+    echo myonesilaserver.com | sudo tee /etc/hostname
+    ```
 
-5Setup some more dependencies:
+5. Setup some more dependencies:
 
-```python
-apt-get install vim htop screen python3-dev git build-essential python3-pip postgresql postgresql-client postgresql-server-dev-all postgresql-contrib nginx supervisor python3-hypercorn python3-virtualenv redis -y
-```
+    ```python
+    apt-get install vim htop screen python3-dev git build-essential python3-pip postgresql postgresql-client postgresql-server-dev-all postgresql-contrib nginx supervisor python3-hypercorn python3-virtualenv redis -y
+    ```
 
 6. Setup your certificates with letsencrypt, and generate a dhparam for use later
 
-```python
-apt-get install python3-certbot python3-certbot-nginx nginx -y
+    ```python
+    apt-get install python3-certbot python3-certbot-nginx nginx -y
 
-certbot certonly --agree-tos --nginx --rsa-key-size 4096 --email my@email.com -d myonesilaserver.com
+    certbot certonly --agree-tos --nginx --rsa-key-size 4096 --email my@email.com -d myonesilaserver.com
 
-openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
-```
+    openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+    ```
 
 7. Create your production db:
 
-### Setup your project and hypercorn runners
+    ```python
+    sudo su - postgres -c '''psql -c "CREATE DATABASE 'onesila'; "'''
+    sudo su - postgres -c 'psql -c "CREATE USER onesila WITH PASSWORD '\''complicated-password'\'';"'
+    sudo su - postgres -c """psql -c 'GRANT ALL PRIVILEGES ON DATABASE "onesila" to onesila;'"""
+    sudo su - postgres -c """psql -c 'ALTER DATABASE onesila OWNER TO onesila;'"""
+    ```
 
-```python
-sudo su - postgres -c '''psql -c "CREATE DATABASE 'onesila'; "'''
-sudo su - postgres -c 'psql -c "CREATE USER onesila WITH PASSWORD '\''complicated-password'\'';"'
-sudo su - postgres -c """psql -c 'GRANT ALL PRIVILEGES ON DATABASE "onesila" to onesila;'"""
-sudo su - postgres -c """psql -c 'ALTER DATABASE onesila OWNER TO onesila;'"""
-```
+    !!! tip "If you forget the password:"
 
-8. On the server, in your home-folder clone your repo
+        sudo su - postgres -c 'psql -c "ALTER USER onesila WITH PASSWORD '\''complicated-password'\'';"'
 
-```python
-cd /home/onesila
-git clone git@github.com:OneSila/OneSilaHeadless.git
-cd OneSilaHeadless
-git pull
-cd ..
-virtualenv venv
-source venv/bin/activate
-pip install -r OneSilaHeadless/requirements.txt
-```
 
-1. Setup log-folders
+8. Add your deployment keys
 
-```python
-sudo mkdir -p /var/log/OneSilaHeadless/
-sudo chown onesila:sudo -R /var/log/OneSilaHeadless/
-sudo chmod g+ws /var/log/OneSilaHeadless/
-```
+    !!! warning "Dont skip this step, or or next will fail."
 
-1. Create a hypercorn_start file `hypercorn_start`. Run: `nano /home/onesila/hypercorn_start`
 
-```python
-#!/bin/bash
-NAME="OneSilaHeadless"
-DJANGODIR=/home/onesila/OneSilaHeadless/OneSila/
-HOMEDIR=/home/onesila/
-SOCKFILE=/home/onesila/hypercorn.sock
-USER=onesila
-NUM_WORKERS=1
-DJANGO_SETTINGS_MODULE=OneSila.settings
-DJANGO_WSGI_MODULE=OneSila.asgi
-LOGFILE=/var/log/OneSilaHeadless/hypercorn.log
+    On the server, show the public key:
 
-echo "Starting $NAME as `whoami`"
+    ```bash
+    cat /home/onesila/.ssh/id_rsa.pub
+    ```
 
-# Activate the virtual environment
-cd $HOMEDIR
-source venv/bin/activate
-export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
-export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+    And add this to your github repo as an ssh-key on your user.
+    Why? Github doesnt allow the same deployment key to be added to multiple repos. Instead, add it to your user and you will be able to 
+    install both backend and frontend without weird workarounds.
 
-# Create the run directory if it doesn't exist
-RUNDIR=$(dirname $SOCKFILE)
-test -d $RUNDIR || mkdir -p $RUNDIR
+9. On the server, in your home-folder clone your repo
 
-cd $DJANGODIR
-hypercorn  ${DJANGO_WSGI_MODULE}:application \
-  --workers $NUM_WORKERS \
-  --bind=unix:$SOCKFILE \
-  --log-level=debug \
-  --log-file=$LOGFILE
-```
+    ```python
+    cd /home/onesila
+    git clone git@github.com:OneSila/OneSilaHeadless.git
+    cd OneSilaHeadless
+    git pull
+    cd ..
+    virtualenv venv
+    source venv/bin/activate
+    pip install -r OneSilaHeadless/requirements.txt
+    ```
+
+10. Setup log-folders
+
+    ```python
+    sudo mkdir -p /var/log/OneSilaHeadless/
+    sudo chown onesila:sudo -R /var/log/OneSilaHeadless/
+    sudo chmod g+ws /var/log/OneSilaHeadless/
+    ```
+
+11. Create a hypercorn_start file `hypercorn_start`. Run: `nano /home/onesila/hypercorn_start`
+
+    ```python
+    #!/bin/bash
+    NAME="OneSilaHeadless"
+    DJANGODIR=/home/onesila/OneSilaHeadless/OneSila/
+    HOMEDIR=/home/onesila/
+    SOCKFILE=/home/onesila/hypercorn.sock
+    USER=onesila
+    NUM_WORKERS=1
+    DJANGO_SETTINGS_MODULE=OneSila.settings
+    DJANGO_WSGI_MODULE=OneSila.asgi
+    LOGFILE=/var/log/OneSilaHeadless/hypercorn.log
+
+    echo "Starting $NAME as `whoami`"
+
+    # Activate the virtual environment
+    cd $HOMEDIR
+    source venv/bin/activate
+    export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+    export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+    # Create the run directory if it doesn't exist
+    RUNDIR=$(dirname $SOCKFILE)
+    test -d $RUNDIR || mkdir -p $RUNDIR
+
+    cd $DJANGODIR
+    hypercorn  ${DJANGO_WSGI_MODULE}:application \
+      --workers $NUM_WORKERS \
+      --bind=unix:$SOCKFILE \
+      --log-level=debug \
+      --log-file=$LOGFILE
+    ```
 
 1. Create a supervisorctl config file `hypercornctl.conf`. Run: `sudo nano /etc/supervisor/conf.d/hypercornctl.conf`
 
-```python
-[program:hypercornctl]
-command = /home/onesila/hypercorn_start ; Command to start app
-user = onesila 
-stdout_logfile = /var/log/OneSilaHeadless/hypercornctl.log  ; Where to write log messages
-redirect_stderr = true ; Save stderr in the same log
-environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
-stopsignal = TERM
-stopasgroup = true
-```
+    ```python
+    [program:hypercornctl]
+    command = /home/onesila/hypercorn_start ; Command to start app
+    user = onesila 
+    stdout_logfile = /var/log/OneSilaHeadless/hypercornctl.log  ; Where to write log messages
+    redirect_stderr = true ; Save stderr in the same log
+    environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
+    stopsignal = TERM
+    stopasgroup = true
+    ```
 
 1. Create a supervisorctl config file for huey `huey.conf`. Run: `sudo nano /etc/supervisor/conf.d/huey.conf`
 
-```python
-[program:huey]
-command = /home/onesila/OneSilaHeadless/run_huey.sh ; Command to start app
-user = onesila 
-stdout_logfile = /var/log/OneSilaHeadless/huey.log  ; Where to write log messages
-redirect_stderr = true ; Save stderr in the same log
-environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
-stopsignal = TERM
-stopasgroup = true
-```
+    ```python
+    [program:huey]
+    command = /home/onesila/OneSilaHeadless/run_huey.sh ; Command to start app
+    user = onesila 
+    stdout_logfile = /var/log/OneSilaHeadless/huey.log  ; Where to write log messages
+    redirect_stderr = true ; Save stderr in the same log
+    environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
+    stopsignal = TERM
+    stopasgroup = true
+    ```
 
 1. Make your supervisorctl file discoverable, and the hypercorn file executable
 
-```python
-sudo chmod +x /home/onesila/hypercorn_start
-sudo supervisorctl reread
-sudo supervisorctl update
-```
+    ```python
+    sudo chmod +x /home/onesila/hypercorn_start
+    sudo supervisorctl reread
+    sudo supervisorctl update
+    ```
 
-### Setup Nginx
 
 1.  Create a nginx config file `onesila`. Run: `sudo nano /etc/nginx/sites-available/onesila`
 
-```
-upstream OneSilaHeadless_app_server {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
+    ```
+    upstream OneSilaHeadless_app_server {
+      # fail_timeout=0 means we always retry an upstream even if it failed
+      # to return a good HTTP response (in case the Unicorn master nukes a
+      # single worker for timing out).
 
-  server unix:/home/onesila/hypercorn.sock fail_timeout=0;
-}
-
-server {
-    listen 80;
-    server_name myonesilaserver.com;
-    return 301 https://myonesilaserver.com$request_uri;
-}
-
-server {
-
-    listen   443;
-    server_name myonesilaserver.com;
-
-    ssl on;
-    ssl_certificate /etc/letsencrypt/live/myonesilaserver.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/myonesilaserver.com/privkey.pem;
-
-    ssl_session_timeout  10m;
-
-    # https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
-    ssl_prefer_server_ciphers on;
-    ssl_session_cache shared:SSL:10m;
-
-    ssl_dhparam /etc/ssl/certs/dhparam.pem;
-
-    add_header Strict-Transport-Security max-age=63072000;
-    add_header X-Frame-Options DENY;
-    add_header X-Content-Type-Options nosniff;
-
-    client_max_body_size 4G;
-
-    access_log /var/log/OneSilaHeadless/nginx-access.log;
-    error_log /var/log/OneSilaHeadless/nginx-error.log;
-
-    location /static/ {
-        alias   /home/onesila/static/;
+      server unix:/home/onesila/hypercorn.sock fail_timeout=0;
     }
 
-    location /media/ {
-        alias   /home/onesila/media/;
+    server {
+        listen 80;
+        server_name myonesilaserver.com;
+        return 301 https://myonesilaserver.com$request_uri;
     }
 
-    location / {
-        if (-f /home/onesila/maintenance.flag) {
-            return 503;
+    server {
+
+        listen   443;
+        server_name myonesilaserver.com;
+
+        ssl on;
+        ssl_certificate /etc/letsencrypt/live/myonesilaserver.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/myonesilaserver.com/privkey.pem;
+
+        ssl_session_timeout  10m;
+
+        # https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+        ssl_prefer_server_ciphers on;
+        ssl_session_cache shared:SSL:10m;
+
+        ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+        add_header Strict-Transport-Security max-age=63072000;
+        add_header X-Frame-Options DENY;
+        add_header X-Content-Type-Options nosniff;
+
+        client_max_body_size 4G;
+
+        access_log /var/log/OneSilaHeadless/nginx-access.log;
+        error_log /var/log/OneSilaHeadless/nginx-error.log;
+
+        location /static/ {
+            alias   /home/onesila/static/;
         }
-        # an HTTP header important enough to have its own Wikipedia entry:
-        #   http://en.wikipedia.org/wiki/X-Forwarded-For
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-        # enable this if and only if you use HTTPS, this helps Rack
-        # set the proper protocol for doing redirects:
-        proxy_set_header X-Forwarded-Proto https;
-
-        # pass the Host: header from the client right along so redirects
-        # can be set properly within the Rack application
-        proxy_set_header Host $http_host;
-
-        # we don't want nginx trying to do something clever with
-        # redirects, we set the Host: header above already.
-        proxy_redirect off;
-
-        # set "proxy_buffering off" *only* for Rainbows! when doing
-        # Comet/long-poll stuff.  It's also safe to set if you're
-        # using only serving fast clients with Unicorn + nginx.
-        # Otherwise you _want_ nginx to buffer responses to slow
-        # clients, really.
-        # proxy_buffering off;
-
-        # For websockets we want a few more settings.  If you have
-        # issues, you might want to split up the ws and graphql paths
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_read_timeout 1800;
-        proxy_send_timeout 1800;
-
-
-        # Try to serve static files from nginx, no point in making an
-        # *application* server like Unicorn/Rainbows! serve static files.
-        if (!-f $request_filename) {
-            proxy_pass http://OneSilaHeadless_app_server;
-            break;
+        location /media/ {
+            alias   /home/onesila/media/;
         }
-        # auth_basic "Restricted";
-        # auth_basic_user_file /etc/nginx/.htpasswd;
-	  # include /etc/nginx/allowed-countries.conf;
-    }
 
-    # Error pages
-    # FIXME: Fallback template paths should relly be created
-    # error_page 403 404 405 /404.html;
-    # location = /404.html {
-    #     root /home/onesila/OneSilaHeadless/OneSila/templates/;
-    # }
-    # error_page 500 501 502 504 /500.html;
-    # location = /500.html {
-    #     root /home/onesila/OneSilaHeadless/OneSila/templates/;
-    # }
-    # 
-    # error_page 503 /503.html;
-    # location = /503.html {
-    #     root /home/onesila/OneSilaHeadless/OneSila/templates/;
-    # }
-}
-```
+        location / {
+            if (-f /home/onesila/maintenance.flag) {
+                return 503;
+            }
+            # an HTTP header important enough to have its own Wikipedia entry:
+            #   http://en.wikipedia.org/wiki/X-Forwarded-For
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            # enable this if and only if you use HTTPS, this helps Rack
+            # set the proper protocol for doing redirects:
+            proxy_set_header X-Forwarded-Proto https;
+
+            # pass the Host: header from the client right along so redirects
+            # can be set properly within the Rack application
+            proxy_set_header Host $http_host;
+
+            # we don't want nginx trying to do something clever with
+            # redirects, we set the Host: header above already.
+            proxy_redirect off;
+
+            # set "proxy_buffering off" *only* for Rainbows! when doing
+            # Comet/long-poll stuff.  It's also safe to set if you're
+            # using only serving fast clients with Unicorn + nginx.
+            # Otherwise you _want_ nginx to buffer responses to slow
+            # clients, really.
+            # proxy_buffering off;
+
+            # For websockets we want a few more settings.  If you have
+            # issues, you might want to split up the ws and graphql paths
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_read_timeout 1800;
+            proxy_send_timeout 1800;
+
+
+            # Try to serve static files from nginx, no point in making an
+            # *application* server like Unicorn/Rainbows! serve static files.
+            if (!-f $request_filename) {
+                proxy_pass http://OneSilaHeadless_app_server;
+                break;
+            }
+            # auth_basic "Restricted";
+            # auth_basic_user_file /etc/nginx/.htpasswd;
+    	  # include /etc/nginx/allowed-countries.conf;
+        }
+
+        # Error pages
+        # FIXME: Fallback template paths should relly be created
+        # error_page 403 404 405 /404.html;
+        # location = /404.html {
+        #     root /home/onesila/OneSilaHeadless/OneSila/templates/;
+        # }
+        # error_page 500 501 502 504 /500.html;
+        # location = /500.html {
+        #     root /home/onesila/OneSilaHeadless/OneSila/templates/;
+        # }
+        # 
+        # error_page 503 /503.html;
+        # location = /503.html {
+        #     root /home/onesila/OneSilaHeadless/OneSila/templates/;
+        # }
+    }
+    ```
 
 1. Enable your newly created config-file:
 
-```python
-sudo ln -s /etc/nginx/sites-available/onesila /etc/nginx/sites-enabled/onesila
-```
+    ```python
+    sudo ln -s /etc/nginx/sites-available/onesila /etc/nginx/sites-enabled/onesila
+    ```
 
 1. Restart nginx:  `sudo /etc/init.d/nginx restart`
 
-If all was setup correctly, you should now be able to access your app via https://myonesilaserver.com/
+    If all was setup correctly, you should now be able to access your app via https://myonesilaserver.com/
 
-### Adding the OneSila configuration file
+1. Adding the OneSila configuration file
 
-Use the template settings file `local_template.py` to make a `local.py` file.
+    Use the template settings file `local_template.py` to make a `local.py` file.
 
-```commandline
-cp /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local_template.py /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local.py
-```
+    ```commandline
+    cp /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local_template.py /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local.py
+    ```
 
-Then we can:
+    Then we can:
 
-```commandline
-nano /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local.py
-```
+    ```commandline
+    nano /home/onesila/OneSilaHeadless/OneSila/OneSila/settings/local.py
+    ```
 
-Edit the file and adjust at a minimumm  ALLOWED_HOST, DATABASE and SECRET_KEY.
-Use the database settings you used earliers.
-AND ensure you setup CORS or your graphql will not work.  # FIMXE: Details on how to fix CORS?
+    Edit the file and adjust at a minimumm  ALLOWED_HOST, DATABASE and SECRET_KEY.
+    Use the database settings you used earliers.
+    @FIXME Show the actual changes
+    AND ensure you setup CORS or your graphql will not work.  # FIMXE: Details on how to fix CORS?
 
-Now we can finally run the services:
-```
-sudo supervisorctl start hypercornctl
-sudo supervisorctl start huey
-```
+    Now we can finally run the services:
+    ```
+    sudo supervisorctl start hypercornctl
+    chmod 777 /home/onesila/hypercorn.sock  # FIX settings = big no no
+    sudo supervisorctl start huey
+    ```
 
-and run migrations
+    and run migrations
 
-```
-source /home/onesila/venv/bin/activate
-cd /home/onesila/OneSilaHeadless/
-./manage migrations
-./manage collectstatic
-```
+    ```
+    source /home/onesila/venv/bin/activate
+    cd /home/onesila/OneSilaHeadless/
+    ./manage migrations
+    ./manage collectstatic
+    ```
 
-
-# @FIXME Show the actual changes
 
 ## Auto deployment:
-
-### Add your deployment keys to bitbucket of github
-
-```python
-cat /home/onesila/.ssh/id_rsa.pub
-```
 
 ### Prepping the variables in your fork.
 
