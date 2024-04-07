@@ -58,6 +58,7 @@ Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.c
 
 5. Setup some more dependencies:
 
+<<<<<<< HEAD
     ```python
     apt-get install vim htop screen python3-dev git build-essential python3-pip postgresql postgresql-client postgresql-server-dev-all postgresql-contrib nginx supervisor python3-hypercorn python3-virtualenv redis -y
     ```
@@ -71,6 +72,20 @@ Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.c
 
     openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
     ```
+=======
+```python
+sudo apt-get install vim htop screen python3-dev git build-essential python3-pip postgresql postgresql-client postgresql-server-dev-all postgresql-contrib nginx supervisor python3-hypercorn python3-virtualenv redis -y
+```
+
+6. Setup your certificates with letsencrypt, and generate a dhparam for use later
+
+```python
+sudo apt-get install python3-certbot python3-certbot-nginx nginx -y
+
+sudo certbot certonly --agree-tos --nginx --rsa-key-size 4096 --email my@email.com -d myonesilaserver.com
+
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+```
 
 7. Create your production db:
 
@@ -171,6 +186,9 @@ Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.c
 
 1. Create a supervisorctl config file for huey `huey.conf`. Run: `sudo nano /etc/supervisor/conf.d/huey.conf`
 
+We use stopsignal = INT for graceful shutdown.
+otherise you can use TERM for immediate shutdown.
+
     ```python
     [program:huey]
     command = /home/onesila/OneSilaHeadless/run_huey.sh ; Command to start app
@@ -178,9 +196,11 @@ Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.c
     stdout_logfile = /var/log/OneSilaHeadless/huey.log  ; Where to write log messages
     redirect_stderr = true ; Save stderr in the same log
     environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
-    stopsignal = TERM
+    stopsignal = INT
     stopasgroup = true
+    stopwaitsecs = 30
     ```
+
 
 1. Make your supervisorctl file discoverable, and the hypercorn file executable
 
@@ -353,6 +373,10 @@ Note: This guide is assuming the [myonesilaserver.com](https://myonesilaserver.c
     ./manage migrations
     ./manage collectstatic
     ```
+
+1. Restart nginx:  `sudo /etc/init.d/nginx restart`
+
+If all was setup correctly, you should now be able to access your app via https://myonesilaserver.com/
 
 
 ## Auto deployment:
