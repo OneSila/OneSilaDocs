@@ -14,7 +14,7 @@ FIXME: Subscriptions and schema declaration
 When creating a new app it's imporant to import models from the core instead of the default django.
 eg:
 
-```pyton
+```python
 from django.db import models
 
 class MyClass(models.Model):
@@ -23,7 +23,7 @@ class MyClass(models.Model):
 
 becomes
 
-```pyton
+```python
 from core import models
 
 class MyClass(models.Model):
