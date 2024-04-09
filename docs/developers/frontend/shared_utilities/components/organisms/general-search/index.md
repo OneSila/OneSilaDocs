@@ -1,4 +1,4 @@
-# GeneralSearch Component Overview
+# GeneralSearch Overview
 
 ## Description
 `GeneralSearch` is a versatile Vue component designed to facilitate complex searching and filtering functionalities in web applications. It integrates elements like a search bar, filter modal, ordering dropdown, and a reset filter button, offering a comprehensive and dynamic user experience.
@@ -44,7 +44,7 @@ Defines the sorting order of search results:
 The `GeneralSearch` component can be integrated into web applications where advanced search capabilities are required. It's particularly useful in data-driven applications where users need to filter and sort through large datasets.
 
 ## Sample Configuration
-```javascript
+```typescript
 const searchConfig = searchConfigConstructor(t);
 
 <GeneralSearch :searchConfig="searchConfig" />
@@ -52,7 +52,7 @@ const searchConfig = searchConfigConstructor(t);
 
 Where searchConfigConstructor is a function that returns a SearchConfig object:
 
-```javascript
+```typescript
 export const searchConfigConstructor = (t: Function): SearchConfig => ({
   search: false,
   orderKey: "sort",
@@ -116,4 +116,4 @@ export const searchConfigConstructor = (t: Function): SearchConfig => ({
 
 For details on configuring individual filters within GeneralSearch, please refer to the [Search Filters documentation](./filter_fields.md).
 
-We will go more in deep about how to use it on the practical use for [form pages](./../../../../practical_use/list_page.md)
+We will go more in deep about how to use it on the practical use for [listing pages](./../../../../practical_use/list_page.md)

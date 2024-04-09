@@ -1,21 +1,16 @@
-import { onBeforeUnmount, onMounted } from 'vue';
 
-export const onMessageReceived = (callback: (event: any) => void) => {
-  window.addEventListener('message', callback);
+# Frame Module
 
-  return () => {
-    window.removeEventListener('message', callback);
-  };
-};
+## Overview
+The `Frame` module in Vue applications is used to manage messaging and events within embedded frames or between different contexts. This is particularly useful for applications that use iframes or need to handle cross-origin communications.
 
-export const useMessageListener = (callback: (event: any) => void) => {
-  let removeListener: () => void;
+## Features
+- Event Listener Management: Simplifies the process of adding and removing message event listeners.
+- Cross-Origin Communication: Facilitates communication between different origins securely and efficiently.
 
-  onMounted(() => {
-    removeListener = onMessageReceived(callback);
-  });
+## Key Functions
+- `onMessageReceived`: Adds a message event listener for receiving messages.
+- `useMessageListener`: Vue composition function to manage message listeners within the component lifecycle.
+- `onBeforeUnmount` & `onMounted`: Vue lifecycle hooks to add and remove listeners efficiently.
 
-  onBeforeUnmount(() => {
-    removeListener && removeListener();
-  });
-};
+This module enhances the capabilities of Vue applications that interact with iframes or require message passing between different window contexts.

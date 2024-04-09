@@ -1,5 +1,5 @@
 
-# Logo Component
+# Logo
 
 ## Overview
 The `Logo.vue` component displays a logo image, typically used for branding. It's wrapped in a link component, which redirects to a specified route when clicked, commonly the homepage.

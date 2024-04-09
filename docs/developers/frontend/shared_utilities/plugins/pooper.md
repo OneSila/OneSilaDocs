@@ -1,8 +1,7 @@
-import { App, Plugin } from 'vue';
-import Popper from 'vue3-popper';
+# Popper Plugin Overview
 
-export default {
-  install(app: App) {
-    app.component('Popper', Popper);
-  },
-} as Plugin;
+## Description
+The Popper plugin integrates vue3-popper, a tooltip and popover library, into Vue applications for creating dynamic and interactive popovers.
+
+## Usage
+Use the Popper component in templates to create flexible popovers attached to various elements.

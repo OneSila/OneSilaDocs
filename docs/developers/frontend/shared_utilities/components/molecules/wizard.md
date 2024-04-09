@@ -1,5 +1,5 @@
 
-# Wizard Component
+# Wizard
 
 ## Overview
 The `Wizard.vue` component facilitates creating multi-step processes, like forms or wizards.

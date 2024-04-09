@@ -1,67 +1,30 @@
-import Swal from 'sweetalert2';
 
-const showAlert = async (type, title) => {
-  var toastMixin = Swal.mixin({
-    toast: true,
-    animation: true,
-    position: 'top-right',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    background: '#181f32',
-    padding: '2em',
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    }
-  });
+# Toast Module Overview
 
-  toastMixin.fire({
-    icon: type,
-    title: title,
-    customClass: {
-      timerProgressBar: getTypeClass(type)
-    },
-  });
-};
+## Description
+The Toast module provides a convenient way to display brief, auto-dismissing messages or alerts in a Vue.js application.
 
-const getTypeClass = (type) => {
-  switch (type) {
-    case 'success':
-      return 'bg-success-light dark:bg-success-dark-light';
-    case 'error':
-      return 'bg-danger-light dark:bg-danger-dark-light';
-    case 'warning':
-      return 'bg-warning-light dark:bg-warning-dark-light';
-    case 'info':
-      return 'bg-info-light dark:bg-info-dark-light';
-    case 'question':
-      return 'bg-primary-light dark:bg-primary-dark-light';
-    default:
-      return 'bg-secondary-light dark:bg-secondary-dark-light';
-  }
-};
+## Key Features
+- **Customizable Toasts**: Supports different types like info, success, warning, and error.
+- **Auto-dismiss**: Toasts automatically disappear after a set duration.
+- **Interactive**: Users can pause the timer by hovering over the toast.
 
+## Usage
+Use the Toast module to display notifications or alerts to the user, especially for asynchronous operations' status like API requests.
 
-export class Toast {
-  static info(title) {
-    showAlert('info', title);
-  }
+## Example
+```typescript
+import { Toast } from './toastModule';
 
-  static success(title) {
-    showAlert('success', title);
-  }
+// Display an information toast
+Toast.info('Information message');
 
-  static error(title) {
-    showAlert('error', title);
-  }
+// Display a success toast
+Toast.success('Success message');
 
-  static warning(title) {
-    showAlert('warning', title);
-  }
+// Display an error toast
+Toast.error('Error message');
 
-  static question(title) {
-    showAlert('question', title);
-  }
-
-}
+// Display a warning toast
+Toast.warning('Warning message');
+```

@@ -1,5 +1,5 @@
 
-# SearchInput Component
+# SearchInput
 
 ## Overview
 The `SearchInput` component is a search field with an integrated search icon, primarily used for filtering data or initiating search queries in an application. It offers a debounce feature for efficient query handling.

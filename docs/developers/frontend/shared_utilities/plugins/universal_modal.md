@@ -1,12 +1,7 @@
-import { Plugin } from 'vue';
-import 'vue-universal-modal/dist/index.css';
-import VueUniversalModal from 'vue-universal-modal';
+# UniversalModal Plugin Overview
 
-export default {
-  install(app) {
-    app.use(VueUniversalModal, {
-      teleportTarget: '#modals',
-      modalComponent: 'UniversalModal',
-    });
-  },
-} as Plugin;
+## Description
+The Universal Modal plugin integrates vue-universal-modal for managing modals. It provides a straightforward way to create and handle modals anywhere in the Vue application.
+
+## Usage
+Use the plugin to register a global modal component, which can be invoked and controlled from any part of the application.

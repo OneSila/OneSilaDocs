@@ -11,7 +11,7 @@ The `api` directory in the OneSila Frontend project is a centralized location fo
 ### Mutations
 Mutations in GraphQL are used to create, update, or delete data. Here's an example of a mutation used to create a new company:
 
-```javascript
+```typescript
 import { gql } from 'graphql-tag';
 
 export const createCompanyMutation = gql`
@@ -31,7 +31,7 @@ This mutation, `createCompanyMutation`, takes a `CompanyInput` object and create
 ### Queries
 Queries are used to fetch data. Here's an example of a query to fetch companies:
 
-```javascript
+```typescript
 import { gql } from 'graphql-tag';
 
 export const companiesQuery = gql`
@@ -63,7 +63,7 @@ The `companiesQuery` fetches a list of companies with pagination and filtering c
 ### Subscriptions
 Subscriptions provide real-time updates via a WebSocket connection. Here's an example subscription for a company:
 
-```javascript
+```typescript
 import { gql } from 'graphql-tag';
 
 export const getCompanySubscription = gql`

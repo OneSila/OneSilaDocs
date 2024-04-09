@@ -1,5 +1,5 @@
 
-# LanguageDropdown Component
+# LanguageDropdown
 
 ## Overview
 The `LanguageDropdown.vue` component allows users to select a language from a dropdown list. It is useful for implementing multilingual support in applications.

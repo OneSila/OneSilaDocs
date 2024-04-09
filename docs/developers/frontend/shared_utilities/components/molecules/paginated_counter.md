@@ -1,3 +1,3 @@
-# Bulletted List Component
+# Bulletted List
 
 🚧 In Development

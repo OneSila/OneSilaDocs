@@ -1,5 +1,5 @@
 
-# Thumbnail Component
+# Thumbnail
 
 ## Overview
 The `Thumbnail.vue` component displays an image thumbnail. It can also show an icon when no image link is provided.

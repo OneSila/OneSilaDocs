@@ -1,5 +1,5 @@
 
-# SelectAllCheckbox Component
+# SelectAllCheckbox
 
 ## Overview
 The `SelectAllCheckbox.vue` component is used to create a checkbox that allows selecting or deselecting all items in a list.

@@ -1,5 +1,5 @@
 
-# Breadcrumbs Component
+# Breadcrumbs
 
 ## Overview
 `Breadcrumbs.vue` is a navigational component that helps users to keep track of their locations within programs, documents, or websites.

@@ -1,5 +1,5 @@
 
-# ApolloAlertMutation Component
+# ApolloAlertMutation
 
 ## Overview
 `ApolloAlertMutation` is a component that combines Apollo Mutation with SweetAlert2, providing a user-friendly confirmation dialog before proceeding with a GraphQL mutation. This is particularly useful for actions requiring user confirmation like deletions.

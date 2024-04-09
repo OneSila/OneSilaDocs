@@ -1,10 +1,7 @@
-import { Plugin } from 'vue'
-import { Flex, FlexCell } from "../components/layouts/flex";
+# SharedComponents Plugin Overview
 
-export default {
-  install(app) {
-    app.component("Flex", Flex);
-    app.component("FlexCell", FlexCell);
+## Description
+The Shared Components plugin globally registers common layout components like Flex and FlexCell, allowing them to be used anywhere in the Vue app without the need for importing them in each component.
 
-  }
-} as Plugin
+## Usage
+Register Flex and FlexCell components globally during app initialization. These components can then be used directly in templates.

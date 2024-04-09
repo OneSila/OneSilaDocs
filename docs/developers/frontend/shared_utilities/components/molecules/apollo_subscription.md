@@ -1,5 +1,5 @@
 
-# ApolloSubscription Component
+# ApolloSubscription
 
 ## Overview
 `ApolloSubscription` is a component designed to manage GraphQL subscriptions in Vue.js applications. It helps in setting up subscriptions and handling real-time data updates.

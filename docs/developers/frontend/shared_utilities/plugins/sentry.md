@@ -1,30 +1,7 @@
-import { Plugin } from 'vue'
-import * as Sentry from '@sentry/vue'
-import { BrowserTracing } from '@sentry/tracing'
+# Sentry Plugin Overview
 
-import { getRouter } from '../modules/router'
+## Description
+The Sentry plugin integrates Sentry's real-time error tracking and monitoring. It sets up Sentry to capture exceptions and performance issues, aiding in debugging and improving the application.
 
-export default {
-  install(app) {
-    const dsn = import.meta.env.VITE_APP_SENTRY_DSN || ''
-
-    if (!dsn) {
-      return
-    }
-
-    Sentry.init({
-      app,
-      dsn,
-      environment: import.meta.env.VITE_APP_SENTRY_ENV || 'development',
-      integrations: [
-        new BrowserTracing({
-          routingInstrumentation: Sentry.vueRouterInstrumentation(getRouter()),
-          tracingOrigins: ["localhost", /^\//],
-        }),
-      ],
-      // Since volume isn't a concern in this application, we'll start
-      // by capturing 100% of all transactions for better context.
-      tracesSampleRate: 1.0,
-    });
-  }
-} as Plugin
+## Usage
+Initialize Sentry with the Vue app, DSN, and environment configuration. Includes tracing integration with browser routing for Vue Router.

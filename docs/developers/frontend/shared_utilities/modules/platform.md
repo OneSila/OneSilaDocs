@@ -1,25 +1,18 @@
-const userAgentString = navigator.userAgent
 
-export const isChrome = () => {
-  return userAgentString.indexOf("Chrome") > -1
-}
+# Platform Module
 
-export const isExplorer = () => {
-  return userAgentString.indexOf("MSIE") > -1 || userAgentString.indexOf("rv:") > -1
-}
+## Overview
+The `Platform` module in Vue applications is used to detect the user's browser and operating platform. This module is helpful for functionalities that are browser-specific or require platform-based differentiation.
 
-export const isFirefox = () => {
-  return userAgentString.indexOf("Firefox") > -1
-}
+## Features
+- Browser Detection: Identifies which browser the user is using (Chrome, Firefox, Safari, etc.).
+- Platform Specific Functionality: Enables the implementation of features specific to certain browsers or platforms.
 
-export const isSafari = () => {
-  const isSafariAgent = userAgentString.indexOf("Safari") > -1
-  
-  return isSafariAgent && !isChrome()
-}
+## Key Functions
+- `isChrome`: Returns true if the browser is Chrome.
+- `isExplorer`: Identifies if the browser is Internet Explorer.
+- `isFirefox`: Checks if the browser is Firefox.
+- `isSafari`: Determines if the browser is Safari.
+- `isOpera`: Detects if the browser is Opera.
 
-export const isOpera = () => {
-  let isOperaAgent = userAgentString.indexOf("OP") > -1
-
-  return isOperaAgent && !isChrome()
-}
+This module is crucial for tailoring user experiences based on the browser and platform, ensuring compatibility and optimal performance across different environments.

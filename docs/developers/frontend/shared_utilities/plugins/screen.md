@@ -1,19 +1,7 @@
-import { Plugin } from 'vue'
-import { reactive } from "vue"
+# Screen Plugin Overview
 
-import { detectScreen, ScreenKey } from "../modules/screen"
+## Description
+The Screen plugin provides reactive screen size information, allowing Vue components to adapt based on the viewport size.
 
-export default {
-  install(app) {
-    const screen = reactive(detectScreen())
-
-    app.provide(ScreenKey, screen)
-
-    window.addEventListener('resize', () => {
-      const updatedScreen = detectScreen()
-      
-      screen.height = updatedScreen.height
-      screen.width = updatedScreen.width
-    })
-  }
-} as Plugin
+## Usage
+Access reactive screen properties like width and height for responsive designs. It automatically updates on window resize.

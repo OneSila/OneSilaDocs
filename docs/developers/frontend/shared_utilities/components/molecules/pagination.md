@@ -1,5 +1,5 @@
 
-# Pagination Component
+# Pagination
 
 ## Overview
 `Pagination.vue` provides a navigational pagination component, allowing users to browse through pages of content. It supports first, last, next, and previous page navigation.

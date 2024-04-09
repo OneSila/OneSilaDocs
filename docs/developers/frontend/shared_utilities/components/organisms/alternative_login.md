@@ -1,1 +1,3 @@
-export { default as AlternativeLogin } from "./AlternativeLogin.vue";
+# Aleternative Login
+
+🚧 In Development

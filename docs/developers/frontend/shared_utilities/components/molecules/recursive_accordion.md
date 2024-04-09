@@ -1,5 +1,5 @@
 
-# RecursiveAccordion Component
+# RecursiveAccordion
 
 ## Overview
 The `RecursiveAccordion` component is a versatile component used to display hierarchical data structures. It leverages the `Accordion` component to present nested data in an expandable format, enhancing readability and user experience.

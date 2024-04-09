@@ -1,1 +1,3 @@
-export { default as UserNotifications } from "./UserNotifications.vue";
+# User notifications
+
+🚧 In Development

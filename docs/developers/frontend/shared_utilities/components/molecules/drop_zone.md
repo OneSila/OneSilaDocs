@@ -1,3 +1,3 @@
-# Drop Zone Component
+# Drop Zone
 
 🚧 In Development

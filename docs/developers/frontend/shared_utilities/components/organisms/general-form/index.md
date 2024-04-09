@@ -1,5 +1,5 @@
 
-# GeneralForm Component Overview
+# GeneralForm Overview
 
 ## Description
 `GeneralForm` is a Vue component designed for dynamic form creation and editing. It supports a wide range of field types and is highly configurable to cater to different form requirements in an application.

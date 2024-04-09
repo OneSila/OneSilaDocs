@@ -1,5 +1,5 @@
 
-# Tabs Component
+# Tabs
 
 ## Overview
 The `Tabs.vue` component provides a tabbed interface for displaying content. It uses the Headless UI TabGroup for functionality.

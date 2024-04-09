@@ -1,5 +1,5 @@
 
-# FilterManager Component
+# FilterManager
 
 ## Overview
 The `FilterManager.vue` component is designed to manage filtering, ordering, and pagination for Apollo GraphQL queries. It is highly configurable and integrates seamlessly with Vue Router to maintain filter state across page navigation.
