@@ -29,6 +29,16 @@ export const baseFormConfigConstructor = (
   mutationKey: mutationKey,
   submitUrl: { name: 'contacts.people.list' },
   deleteMutation: deletePersonMutation,
+  helpSections: [
+    {
+      header: t('contacts.people.helpSections.personalDataHeader'),
+      content: t('contacts.people.helpSections.personalContent')
+    },
+    {
+      header: 'Language', // Even if is possible to add non translated strings is not recommended
+      content: 'We need the language so when we send email to that person to send in his language'
+    }
+  ],
   fields: [
     {
       type: FieldType.Text,
