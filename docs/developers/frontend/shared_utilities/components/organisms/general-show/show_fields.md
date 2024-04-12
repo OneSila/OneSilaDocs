@@ -48,9 +48,10 @@ Inherits `ShowBaseField`
 ### NestedTextField
 Inherits `ShowBaseField`
 
-| Key           | Type    | Mandatory | Description |
-|---------------|---------|-----------|-------------|
-| `keys`        | `string[]` | Yes   | Array of keys to access nested text values. |
+| Key           | Type    | Mandatory | Description                                                           |
+|---------------|---------|-----------|-----------------------------------------------------------------------|
+| `keys`        | `string[]` | Yes   | Array of keys to access nested text values.                           |
+| `clickIdentifiers`| `ClickIdentifier[]` | Optional | Array of click identifier configurations used to build the click URL. |
 
 ### ArrayField
 Inherits `ShowBaseField`

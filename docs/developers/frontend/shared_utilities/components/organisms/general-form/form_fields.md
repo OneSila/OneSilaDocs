@@ -114,26 +114,30 @@ This field allows a selection that maps directly to specific model attributes, e
 ### QueryFormField
 Inherits `BaseFormField`
 
-| Key                   | Type      | Mandatory | Default | Description                                          |
-|-----------------------|-----------|-----------|---------|------------------------------------------------------|
-| `labelBy`             | `string`  | Yes       |         | Field name for the label.                            |
-| `valueBy`             | `string`  | Yes       |         | Field name for the value.                            |
-| `query`               | `string`  | Yes       |         | GraphQL query for fetching data.                     |
-| `queryVariables`      | `object`  | Optional  |         | Variables for the query.                             |
-| `dataKey`             | `string`  | Yes       |         | Key to extract data from the query response.         |
-| `isEdge`              | `boolean` | Optional  | `false` | If the response has edges in a GraphQL query result. |
-| `formMapIdentifier`   | `string`  | Optional  |         | Identifier for mapping query response to the form.   |
-| `placeholder`         | `string`  | Optional  |         | Placeholder text.                                    |
-| `dropdownPosition`    | `string`  | Optional  | `top`   | Position of the dropdown.                            |
-| `mandatory`           | `boolean` | Optional  | `false` | If the selection is mandatory.                       |
-| `multiple`            | `boolean` | Optional  | `false` | If multiple selections are allowed.                  |
-| `filterable`          | `boolean` | Optional  | `false` | If the options are filterable.                       |
-| `removable`           | `boolean` | Optional  | `true`  | If the options are removable.                        |
-| `limit`               | `number`  | Optional  |         | Limit for the number of options.                     |
-| `createOnFlyConfig`   | `CreateOnTheFly` | Optional  |  | Configuration for creating entries on the fly.       |
+| Key                    | Type                | Mandatory | Default | Description                                                                                           |
+|------------------------|---------------------|-----------|---------|-------------------------------------------------------------------------------------------------------|
+| `labelBy`              | `string`            | Yes       |         | Field name for the label.                                                                             |
+| `valueBy`              | `string`            | Yes       |         | Field name for the value.                                                                             |
+| `query`                | `string`            | Yes       |         | GraphQL query for fetching data.                                                                      |
+| `queryVariables`       | `object`            | Optional  |         | Variables for the query.                                                                              |
+| `dataKey`              | `string`            | Yes       |         | Key to extract data from the query response.                                                          |
+| `isEdge`               | `boolean`           | Optional  | `false` | If the response has edges in a GraphQL query result.                                                  |
+| `formMapIdentifier`    | `string`            | Optional  |         | Identifier for mapping query response to the form.                                                    |
+| `placeholder`          | `string`            | Optional  |         | Placeholder text.                                                                                     |
+| `dropdownPosition`     | `string`            | Optional  | `top`   | Position of the dropdown.                                                                             |
+| `mandatory`            | `boolean`           | Optional  | `false` | If the selection is mandatory.                                                                        |
+| `multiple`             | `boolean`           | Optional  | `false` | If multiple selections are allowed.                                                                   |
+| `filterable`           | `boolean`           | Optional  | `false` | If the options are filterable.                                                                        |
+| `removable`            | `boolean`           | Optional  | `true`  | If the options are removable.                                                                         |
+| `limit`                | `number`            | Optional  |         | Limit for the number of options.                                                                      |
+| `createOnFlyConfig`    | `CreateOnTheFly`    | Optional  |         | Configuration for creating entries on the fly.                                                        |
+| `setDefaultKey`        | `string`            | Optional  |         | Key for auto-setting a default value based on matching conditions in the data.                        |
+| `defaultExpectedValue` | `any`               | Optional  | `true`  | The value to match for `setDefaultKey`. If undefined and `setDefaultKey` is set , defaults to `true`. |
 
 _CreateOnTheFly Explanation:_
 This feature allows users to create new entries for a particular model directly within the form. The `config` key in `CreateOnTheFly` is a `FormConfig` object, enabling users to create a new entity in a modal, with the new entry automatically selected in the form.
+
+If a selector have just one data entry and is mandatory it will be automatically selected.
 
 ### DateFormField
 _Still in development_
