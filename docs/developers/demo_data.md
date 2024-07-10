@@ -51,12 +51,25 @@ The field_mapper values are expecting either:
 
 ### Dynamic field_mapper values
 
-To assign dynamic values, if you need foreight keys - it's easiest to just override the `prep_baker_kwargs` method. eg:
+To assign dynamic values, if you need foreign keys - it's easiest to just override the `prep_baker_kwargs` method. eg:
 
-    def prep_baker_kwargs(self, seed):
-        kwargs = super().prep_baker_kwargs(seed)
-        kwargs['vat_rate'] = VatRate.objects.last()
-        return kwargs
+    from core.demo_data import fake, PrivateDataGenerator
+
+    class AppMyModelGenerator(PrivateDataGenerator):
+        model = MyModel
+        count = 1
+        field_mapper = {
+            'name': fake.name,
+            'unit': (fake.unit, {'length': 10}),
+            'fixed_value': 329,
+       }
+    
+        def prep_baker_kwargs(self, seed):
+            kwargs = super().prep_baker_kwargs(seed)
+            kwargs['vat_rate'] = VatRate.objects.last()
+            return kwargs
+    
+    registry.register_private_app(AppMyModelGenerator)
 
 ## Function based demo data.
 
