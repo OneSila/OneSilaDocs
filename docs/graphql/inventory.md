@@ -1,6 +1,6 @@
 # Inventory
 
-## Inventory Movements
+## Inventory Movement Query
 
 Due to the nature of generic relations, and how we implement them. You must use inline fragments.  
 
@@ -58,3 +58,47 @@ Reponse sample:
 }
 ```
 
+## Inventory Movement Create
+
+Mutation example
+
+```graphql
+    mutation createInventoryMovement($data: InventoryMovementInput!){
+      createInventoryMovement(data: $data){
+        quantity
+        notes
+        product {
+          id
+        }
+        movementFrom {
+            ... on InventoryType {
+                id
+            }
+            ... on PurchaseOrderType {
+                id
+            }
+        }
+        movementTo {
+            ... on InventoryType {
+                id
+            }
+            ... on PackageType {
+                id
+          }
+        }
+      }
+    }
+```
+
+Where `InventoryMovementInput` looks like:
+
+```python
+{
+  'data': {
+    'product': {'id': supplier_prod_id},  # GlobalID
+    'quantity': 5,
+    'movementToId': inv_id,
+    'movementFromId': inv_bis_id
+  }
+}
+```
