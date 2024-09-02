@@ -13,20 +13,20 @@ query inventoryMovements{
       node {
         __typename
         movementFrom {
-					... on InventoryType {
-      			id
-			    }
-			    ... on PurchaseOrderType {
+          ... on InventoryType {
             id
-				  }
+          }
+          ... on PurchaseOrderType {
+            id
+          }
         }
         movementTo {
-					... on InventoryType {
-      			id
-			    }
-			    ... on PackageType {
+          ... on InventoryType {
             id
-				  }
+          }
+          ... on PackageType {
+            id
+          }
         }
       }
     }
